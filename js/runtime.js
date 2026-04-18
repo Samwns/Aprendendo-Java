@@ -153,7 +153,7 @@ export async function execute(src, stdin) {
     // 3. Compilar + executar via WebJDKRunner
     setPill('loading', 'Compilando...');
 
-    const classpath = `${JARS_PATH}runner.jar:${JARS_PATH}ecj.jar`;
+    const classpath = `${JARS_PATH}runner.zip:${JARS_PATH}ecj.zip`;
 
     // Usa timestamp para diretório único → evita conflito entre execuções
     const runId    = Date.now().toString(36);
