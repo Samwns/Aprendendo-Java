@@ -58,10 +58,10 @@ export function setSbLines(n) {
 
 // ── INIT MESSAGE ──────────────────────────────────────────────────────────────
 export function printWelcome() {
-  o('ln-sys',  '☕ WebJDK — Java real via CheerpJ WebAssembly JVM');
-  o('ln-sys',  '   Sem servidor · Sem instalação · Roda no navegador');
+  o('ln-sys',  '☕ WebJDK — Java real via CheerpJ');
+  o('ln-sys',  '   Roda no navegador · Sem servidor · Sem instalação · Local');
   o('ln-sep',  '──────────────────────────────────────────────────────');
   o('ln-dim',  '$ Selecione o runtime e clique em ▶ Executar');
-  o('ln-dim',  '  (primeira execução baixa ~30 MB de runtime — fica em cache)');
+  o('ln-dim',  '  (execução local via CheerpJ — WebAssembly)');
   o('ln-sep',  '──────────────────────────────────────────────────────');
 }

@@ -12,41 +12,41 @@
 
 ## 🌐 WebJDK — Java no Navegador
 
-Este repositório inclui um **WebJDK** que permite executar código Java diretamente no navegador usando **CheerpJ** (JVM WebAssembly).
+Este repositório inclui um **WebJDK** que permite executar código Java diretamente no navegador usando **CheerpJ** (execução local via WebAssembly).
 
 ### 🚀 Como Usar
 
-1. **Acesse o WebJDK**: [https://samwns.github.io/Aprendendo-Java/](https://samwns.github.io/Aprendendo-Java/)
-2. **Escreva seu código** no editor Monaco
-3. **Clique em "▶ Executar"** ou pressione `Ctrl+Enter`
-4. **Veja a saída** no terminal integrado
+1. **Para desenvolvimento local**: Execute um servidor web na raiz do projeto
+   ```bash
+   python3 -m http.server 8080
+   ```
+   Acesse: http://localhost:8080
 
-### ⚠️ Problema Atual
+2. **Para Git Pages**: O CheerpJ funciona diretamente no Git Pages
+   - Acesse: [https://samwns.github.io/Aprendendo-Java/](https://samwns.github.io/Aprendendo-Java/)
+   - **Nota**: CheerpJ roda inteiramente no navegador, sem servidores externos
 
-Atualmente, o Git Pages do GitHub não suporta arquivos JAR necessários para o CheerpJ. Para fazer funcionar completamente:
+3. **Escreva seu código** no editor Monaco
+4. **Clique em "▶ Executar"** ou pressione `Ctrl+Enter`
+5. **Veja a saída** no terminal integrado
 
-#### 🔧 Solução: Deploy no Netlify
+### ✨ Funcionalidades
 
-1. **Crie uma conta** no [Netlify](https://netlify.com)
-2. **Conecte seu repositório** GitHub
-3. **Deploy automático** será feito
-4. **Acesse sua URL** personalizada
+- ✅ **Editor Monaco** com syntax highlighting e IntelliSense
+- ✅ **Execução local** via CheerpJ (Java 8)
+- ✅ **Interface responsiva** para desktop e mobile
+- ✅ **Terminal integrado** com saída em tempo real
+- ✅ **Compilação e execução** simuladas no navegador
+- ✅ **100% gratuito** e sem contas necessárias
 
-O Netlify suporta arquivos binários e CORS necessários para o WebJDK funcionar.
+### ✨ Funcionalidades
 
-#### 🛠️ Deploy Manual
-
-Se preferir testar localmente:
-
-```bash
-# Instalar http-server
-npm install -g http-server
-
-# Servir o projeto
-http-server --port 8000 --cors
-```
-
-Acesse: `http://localhost:8000`
+- ✅ **Editor Monaco** com syntax highlighting e IntelliSense
+- ✅ **Execução online** via JDoodle API (gratuita)
+- ✅ **Múltiplas versões Java** (8, 10, 11, 14, 17)
+- ✅ **Interface responsiva** para desktop e mobile
+- ✅ **Terminal integrado** com saída em tempo real
+- ✅ **Entrada padrão** (stdin) suportada
 
 ---
 

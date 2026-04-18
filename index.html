@@ -13,11 +13,11 @@
   <!-- Monaco AMD loader (deve vir antes dos módulos) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
 
-  <!-- CheerpJ 4.2 — JVM WebAssembly para o navegador -->
+  <!-- Piston API — Execução Java online -->
   <script src="https://cjrtnc.leaningtech.com/4.2/loader.js"></script>
 
   <!-- Estilos -->
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css?v=1" />
 </head>
 <body>
 
@@ -37,10 +37,6 @@
     <div class="runtime-wrap">
       <span class="runtime-lbl">Runtime:</span>
       <select id="runtimeSelect" title="Selecionar versão Java">
-        <option value="java17" selected>☕ Java 17 LTS (CheerpJ · preview)</option>
-        <option value="java11">☕ Java 11 LTS (CheerpJ)</option>
-        <option value="java8">☕ Java 8 (CheerpJ)</option>
-        <option value="java21-soon" disabled>⏳ Java 21 — CheerpJ 6.0 (2026)</option>
       </select>
     </div>
 
@@ -120,7 +116,7 @@
   <!-- ── STATUS BAR ─────────────────────────────────────────────────── -->
   <footer class="sbar">
     <span>☕ WebJDK</span>
-    <span id="sbRuntime">Java 17 · CheerpJ · WebAssembly</span>
+    <span id="sbRuntime">Java 21 · Piston API · Online</span>
     <span id="sbL">— linhas</span>
     <div class="sbar-r">
       <span>Ctrl+Enter → Executar</span>
@@ -132,7 +128,7 @@
 </div>
 
 <!-- Módulos ES — main.js importa editor.js, terminal.js, runtime.js -->
-<script type="module" src="js/main.js"></script>
+<script type="module" src="js/main.js?v=1"></script>
 
 </body>
 </html>

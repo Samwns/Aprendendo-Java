@@ -3,7 +3,7 @@
 
 import { initEditor, getCode }               from './editor.js';
 import { printWelcome, clearOut, o, setPill } from './terminal.js';
-import { loadRuntimes, execute, updateRuntimeBadge } from './runtime.js';
+import { loadRuntimes, execute, updateRuntimeBadge, RUNTIMES } from './runtime.js';
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
@@ -13,17 +13,23 @@ window.addEventListener('DOMContentLoaded', async () => {
   // 2. Inicializa Monaco Editor
   await initEditor();
 
-  // 3. Popula o seletor com os runtimes CheerpJ disponíveis
+  // 3. Popula o seletor com os runtimes JDoodle API disponíveis
   await loadRuntimes();
 
   // 4. Evento de mudança de runtime
   document.getElementById('runtimeSelect')
     .addEventListener('change', () => {
       updateRuntimeBadge();
-      // Avisa que a mudança de versão só vale antes da primeira execução
-      o('ln-warn', '⚠  Versão alterada. Se o CheerpJ já foi iniciado, recarregue a página (F5).');
+      // A mudança de versão vale imediatamente com JDoodle API
+      o('ln-info', '✓ Runtime alterado para ' + getSelectedRuntime().label);
     });
 });
+
+// ── GET SELECTED RUNTIME ──────────────────────────────────────────────────────
+function getSelectedRuntime() {
+  const sel = document.getElementById('runtimeSelect');
+  return RUNTIMES.find(r => r.id === sel.value) || RUNTIMES[0];
+}
 
 // ── EXECUTAR ──────────────────────────────────────────────────────────────────
 window.run = async function () {
