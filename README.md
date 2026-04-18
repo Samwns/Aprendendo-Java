@@ -1,5 +1,5 @@
-[![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Oswald&weight=500&size=30&pause=1000&color=F89820&width=435&lines=🚀+Seja+Bem+Vindo!+Bora+Aprender+java)](https://git.io/typing-svg)  
-[![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Oswald&weight=500&size=30&pause=1000&color=F89820&center=true&vCenter=true&width=435&lines=☕+Aprendendo+Java)](https://git.io/typing-svg)  
+[![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Oswald&weight=500&size=30&pause=1000&color=F89820&width=500&lines=🚀+Seja+Bem+Vindo!;☕+Bora+Aprender+Java!;💡+Do+Zero+ao+Avançado;🔥+Vamos+Codar+Juntos!)](https://git.io/typing-svg)  
+[![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Oswald&weight=500&size=30&pause=1000&color=F89820&center=true&vCenter=true&width=500&lines=☕+Aprendendo+Java;🏗️+Orientação+a+Objetos;⚡+Streams+e+Lambdas;🚀+GraalVM+%26+SDKMAN)](https://git.io/typing-svg)  
 ![java-gif](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTBtM2U4eXUyN2tpbWpoYmpzdWVyZWc1ZTE1YWlhbmRqMzY2ZWFkbiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/FoVzfcqCDSb7zCynOp/giphy.gif)
 
 [![Badge Linux](https://img.shields.io/badge/OS-Linux-blue?logo=linux)](https://)  [![Badge Windows](https://img.shields.io/badge/🖥️_OS-Windows-blue?logo=windows)](https://)  [![Badge Java](https://img.shields.io/badge/Java-17%2B-orange?logo=openjdk)](https://)  [![Badge IntelliJ](https://img.shields.io/badge/IDE-IntelliJ_IDEA-purple?logo=intellijidea)](https://)
