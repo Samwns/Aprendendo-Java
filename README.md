@@ -13,27 +13,7 @@
 ## 🌐 WebJDK — Java no Navegador
 
 Este repositório inclui um **WebJDK** que permite executar código Java **com compilação e execução reais** usando **javac** e **Java** no backend.
-
-### 🚀 Como Usar
-
-#### 💻 **Local (Recomendado para desenvolvimento)**
-
-Pré-requisito: Python 3 + Java 21+
-
-```bash
-# Terminal 1: Inicie o servidor de compilação (porta 8888)
-cd /home/samns/Arquivos/Repos/Aprendendo-Java
-python3 server.py
-
-# Terminal 2: Inicie o servidor web (porta 8080)
-python3 -m http.server 8080
-```
-
-Acesse: http://localhost:8080
-
-#### 🌐 **Online (Render, Replit ou Heroku)**
-
-Veja [DEPLOY.md](DEPLOY.md) para instruções de deploy online.
+Acesse: [**WebJDK**](https://samwns.github.io/Aprendendo-Java/) 
 
 ### ✨ Funcionalidades
 
@@ -61,81 +41,9 @@ Veja [DEPLOY.md](DEPLOY.md) para instruções de deploy online.
 
 ### 📝 Limitações
 
-- **Servidor local**: Requer Python 3 + Java 21+ instalados
 - **GitHub Pages sozinho**: Não funciona (requer backend em Render/Replit/Heroku)
 - **Timeout**: Limite de 30 segundos por execução
 - **Performance**: Python é mais lento que compilação nativa (mas funciona!)
-
----
-
-## � Deploy no GitHub Pages (Gratuito!)
-
-O WebJDK funciona 100% no navegador - é só fazer deploy no GitHub Pages!
-
-### Passo 1: Ative GitHub Pages
-
-1. Abra seu repositório no GitHub
-2. Settings → Pages
-3. Source: **main** branch, **/ (root)** folder
-4. Clique em **Save**
-
-### Passo 2: Aguarde alguns minutos
-
-GitHub vai processar e sua URL será:  
-**https://seu-usuario.github.io/Aprendendo-Java/**
-
-### Pronto! ✅
-
-Seu WebJDK está online e funcional! Compartilhe o link com qualquer pessoa.
-
----
-
-```
-Aprendendo-Java/
-├── index.html          # Página principal do WebJDK
-├── css/
-│   └── style.css       # Estilos da interface
-├── js/
-│   ├── main.js         # Ponto de entrada
-│   ├── editor.js       # Monaco Editor
-│   ├── runtime.js      # CheerpJ WebAssembly
-│   └── terminal.js     # Terminal
-├── 1-Conceitos-Basicos/
-│   ├── hello_world/
-│   ├── tipos_de_dados/
-│   ├── entrada_saida/
-│   ├── condicionais/
-│   ├── lacos/
-│   ├── arrays/
-│   ├── funcoes/
-│   └── oop/
-└── README.md           # Este arquivo
-```
-
----
-
-## 1️⃣ - 🛠️ Instalando e Configurando o Ambiente
-
-O **SDKMAN** é um gerenciador de SDKs que permite instalar e trocar versões do JDK com facilidade:
-
-```bash
-# Instalar o SDKMAN
-curl -s "https://get.sdkman.io" | bash
-source "$HOME/.sdkman/bin/sdkman-init.sh"
-
-# Listar versões disponíveis do Java
-sdk list java
-
-# Instalar o Java 21 (LTS recomendado)
-sdk install java 21.0.3-tem
-
-# Instalar o GraalVM
-sdk install java 21.0.3-graal
-
-# Trocar entre versões
-sdk use java 21.0.3-tem
-```
-
 ---
 
 ### 🐧 Linux — Instalação Manual por Distribuição
