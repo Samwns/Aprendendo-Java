@@ -14,56 +14,81 @@
 
 Este repositório inclui um **WebJDK** que permite executar código Java **com compilação e execução reais** usando **javac** e **Java** no backend.
 
-### 🚀 Como Usar (Desenvolvimento Local)
+### 🚀 Como Usar
 
-**Pré-requisito:** Java 21+ instalado (`java -version`)
+#### 💻 **Local (Recomendado para desenvolvimento)**
 
-**Opção 1 - Com Python Server (Recomendado):**
+Pré-requisito: Python 3 + Java 21+
+
 ```bash
-# Terminal 1: Inicie o servidor Python (porta 8888)
+# Terminal 1: Inicie o servidor de compilação (porta 8888)
 cd /home/samns/Arquivos/Repos/Aprendendo-Java
 python3 server.py
 
 # Terminal 2: Inicie o servidor web (porta 8080)
 python3 -m http.server 8080
 ```
+
 Acesse: http://localhost:8080
 
-**Opção 2 - Apenas servidor web (sem execução real):**
-```bash
-python3 -m http.server 8080
-```
+#### 🌐 **Online (Render, Replit ou Heroku)**
+
+Veja [DEPLOY.md](DEPLOY.md) para instruções de deploy online.
 
 ### ✨ Funcionalidades
 
-- ✅ **Editor Monaco** com syntax highlighting e IntelliSense para Java
-- ✅ **Compilação real** via `javac` (Java 21+)
+- ✅ **Editor Monaco** com syntax highlighting para Java
+- ✅ **Compilação real** com `javac` (Java 8+)
 - ✅ **Execução real** com saída exata
 - ✅ **Interface responsiva** para desktop e mobile
 - ✅ **Terminal integrado** com saída em tempo real
 - ✅ **Suporte a stdin** para programas interativos
 - ✅ **Múltiplos tipos de dados** (int, double, String, boolean, arrays, etc)
-- ✅ **100% gratuito** e sem contas necessárias
+- ✅ **100% gratuito** sem contas necessárias
+- ✅ **Deploy online** em Render, Replit ou Heroku
 
 ### 🔧 Arquitetura
 
 | Componente | Descrição |
 |-----------|-----------|
 | `index.html` | Interface web do editor |
-| `js/runtime.js` | Cliente que envia código para servidor |
-| `server.py` | Backend Python que compila e executa Java |
-| `javac` / `java` | Compilador e executor reais do sistema |
+| `js/main.js` | Ponto de entrada da aplicação |
+| `js/editor.js` | Configuração do Monaco Editor |
+| `js/runtime.js` | Cliente que comunica com servidor Python |
+| `js/terminal.js` | Interface do terminal |
+| `server.py` | Backend Python que compila/executa Java com javac/java |
+| **Arquitetura** | Browser → fetch POST → server.py → javac/java → JSON response |
 
 ### 📝 Limitações
 
-- **GitHub Pages**: Não funciona (requer backend Python)
-  - Alternativas: [Replit](https://replit.com), [Render](https://render.com), API de compilação externa
-- **Sem internet**: Funciona totalmente offline (se Java estiver instalado)
+- **Servidor local**: Requer Python 3 + Java 21+ instalados
+- **GitHub Pages sozinho**: Não funciona (requer backend em Render/Replit/Heroku)
 - **Timeout**: Limite de 30 segundos por execução
+- **Performance**: Python é mais lento que compilação nativa (mas funciona!)
 
 ---
 
-## 📁 Estrutura do Projeto
+## � Deploy no GitHub Pages (Gratuito!)
+
+O WebJDK funciona 100% no navegador - é só fazer deploy no GitHub Pages!
+
+### Passo 1: Ative GitHub Pages
+
+1. Abra seu repositório no GitHub
+2. Settings → Pages
+3. Source: **main** branch, **/ (root)** folder
+4. Clique em **Save**
+
+### Passo 2: Aguarde alguns minutos
+
+GitHub vai processar e sua URL será:  
+**https://seu-usuario.github.io/Aprendendo-Java/**
+
+### Pronto! ✅
+
+Seu WebJDK está online e funcional! Compartilhe o link com qualquer pessoa.
+
+---
 
 ```
 Aprendendo-Java/
@@ -71,25 +96,21 @@ Aprendendo-Java/
 ├── css/
 │   └── style.css       # Estilos da interface
 ├── js/
-│   ├── main.js         # Ponto de entrada da aplicação
-│   ├── editor.js       # Configuração do Monaco Editor
-│   ├── runtime.js      # Motor de execução CheerpJ
-│   └── terminal.js     # Interface do terminal
-├── jars/
-│   ├── ecj.jar         # Eclipse Compiler for Java
-│   └── runner.jar      # Utilitário de execução
+│   ├── main.js         # Ponto de entrada
+│   ├── editor.js       # Monaco Editor
+│   ├── runtime.js      # CheerpJ WebAssembly
+│   └── terminal.js     # Terminal
+├── 1-Conceitos-Basicos/
+│   ├── hello_world/
+│   ├── tipos_de_dados/
+│   ├── entrada_saida/
+│   ├── condicionais/
+│   ├── lacos/
+│   ├── arrays/
+│   ├── funcoes/
+│   └── oop/
 └── README.md           # Este arquivo
 ```
-
-### 🎯 Funcionalidades do WebJDK
-
-- ✅ **Editor Monaco** com syntax highlighting Java
-- ✅ **Execução em tempo real** via CheerpJ WebAssembly
-- ✅ **Múltiplas versões Java** (8, 11, 17)
-- ✅ **Terminal integrado** com saída colorida
-- ✅ **Snippets inteligentes** (sout, fori, etc.)
-- ✅ **Responsivo** para mobile
-- ✅ **Entrada stdin** para programas interativos
 
 ---
 

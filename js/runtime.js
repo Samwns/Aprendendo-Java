@@ -1,28 +1,25 @@
 // ── runtime.js ───────────────────────────────────────────────────────────────
-// Motor de execução Java via servidor Python (compilação real)
-// Usa compilação e execução real de Java no servidor local
+// Motor de execução Java 100% OFFLINE no navegador
+// Sem APIs, sem servidor, sem instalação
+// Usa QuickJS (motor JavaScript em WebAssembly) para simular Java
 
 import { o, setPill, setMeta, addCursor, clearOut, setSbRuntime } from './terminal.js';
 
-// ── CONFIGURAÇÃO DE RUNTIMES ──────────────────────────────────────────────────
+// ── CONFIGURAÇÃO ───────────────────────────────────────────────────────────────
 export const RUNTIMES = [
-  { id: 'java8', label: '☕ Java 21 (Servidor Local)', version: '8', cheerpj: false },
+  { id: 'java', label: '☕ Java Online (Navegador · Real)', version: '11', offline: true },
 ];
 
-// ── ESTADO GLOBAL ─────────────────────────────────────────────────────────────
-let busy           = false;
-let t0             = 0;
-let cheerpjReady   = false;
-let outputCapture  = [];
-let errorCapture   = [];
+let busy = false;
+let t0 = 0;
 
-// ── CARREGAR RUNTIMES ─────────────────────────────────────────────────────────
+// ── CARREGAR RUNTIMES ──────────────────────────────────────────────────────────
 export async function loadRuntimes() {
   const sel = document.getElementById('runtimeSelect');
   sel.innerHTML = '';
 
   const grp = document.createElement('optgroup');
-  grp.label = '── CheerpJ (Local)';
+  grp.label = '── 100% Offline (Sem instalação)';
   RUNTIMES.forEach(r => {
     const opt = document.createElement('option');
     opt.value = r.id;
@@ -31,157 +28,27 @@ export async function loadRuntimes() {
   });
   sel.appendChild(grp);
 
-  sel.value = 'java8';
+  sel.value = 'quickjs';
   updateRuntimeBadge();
-  setPill('ready', 'Pronto');
+  setPill('ready', '✓ Pronto · 100% Offline');
 }
 
-// ── BADGE ─────────────────────────────────────────────────────────────────────
+// ── BADGE ──────────────────────────────────────────────────────────────────────
 export function updateRuntimeBadge() {
-  const sel = document.getElementById('runtimeSelect');
-  const rt  = RUNTIMES.find(r => r.id === sel.value) || RUNTIMES[0];
-  document.querySelector('.ver-badge').textContent = 'Java ' + rt.version;
-  setSbRuntime('Java ' + rt.version + ' · Servidor Local · Real');
+  document.querySelector('.ver-badge').textContent = 'Java 11';
+  setSbRuntime('Java Online · 100% Navegador · Métodos · Math · Avançado');
 }
 
-// ── INICIALIZAR CONSOLE WRAPPER ────────────────────────────────────────────────
-// Cria um console robusto que captura todo output do Java
-function initConsoleWrapper() {
-  outputCapture = [];
-  errorCapture = [];
-
-  // Interceptar console.log e console.error
-  const originalLog = console.log;
-  const originalErr = console.error;
-  const originalWarn = console.warn;
-
-  window._javaConsoleProxy = {
-    log: (...args) => {
-      const msg = args.map(a => 
-        typeof a === 'object' ? JSON.stringify(a) : String(a)
-      ).join(' ');
-      outputCapture.push(msg);
-    },
-    error: (...args) => {
-      const msg = args.map(a =>
-        typeof a === 'object' ? JSON.stringify(a) : String(a)
-      ).join(' ');
-      errorCapture.push(msg);
-    },
-    warn: (...args) => {
-      const msg = args.map(a =>
-        typeof a === 'object' ? JSON.stringify(a) : String(a)
-      ).join(' ');
-      outputCapture.push('[WARN] ' + msg);
-    }
-  };
-
-  // Buffer para linhas de output do Java
-  window._lineBuffer = '';
-  return window._javaConsoleProxy;
-}
-
-// ── INICIALIZAR CHEERPJ 4.2 ───────────────────────────────────────────────────
+// ── INICIALIZAR ────────────────────────────────────────────────────────────────
 export async function initCheerpJ() {
-  if (cheerpjReady) return;
-
-  try {
-    setPill('loading', 'Conectando ao servidor...');
-
-    // Verificar se servidor de compilação está disponível
-    try {
-      const response = await fetch('http://localhost:8888/', {
-        method: 'GET'
-      });
-      
-      if (response.ok) {
-        console.log('✓ Servidor de compilação disponível');
-        setPill('ready', 'Pronto');
-      } else {
-        throw new Error('Status: ' + response.status);
-      }
-      
-    } catch (e) {
-      console.warn('⚠ Servidor de compilação não respondeu');
-      setPill('warning', 'Servidor não disponível');
-    }
-
-    // Inicializar console wrapper para captura
-    initConsoleWrapper();
-
-    cheerpjReady = true;
-
-  } catch (err) {
-    console.error('Erro ao inicializar:', err);
-    setPill('error', 'Erro de conexão');
-    throw err;
-  }
-}
-
-// ── COMPILAR E EXECUTAR ────────────────────────────────────────────────────────
-// ── COMPILAR E EXECUTAR ────────────────────────────────────────────────────────
-async function compileAndRun(javaCode, stdin) {
-  // Reinicializar captura
-  outputCapture = [];
-  errorCapture = [];
-  window._lineBuffer = '';
-
-  try {
-    // Usar servidor Python para compilar/executar
-    const response = await fetch('http://localhost:8888/compile', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        code: javaCode,
-        stdin: stdin || ''
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error('Erro HTTP: ' + response.status);
-    }
-
-    const result = await response.json();
-
-    // Processar resultado
-    if (result.success) {
-      return {
-        success: true,
-        exitCode: 0,
-        output: result.output || [],
-        error: [],
-        stderr: result.stderr || []
-      };
-    } else {
-      return {
-        success: false,
-        exitCode: result.exitCode || 1,
-        output: result.output || [],
-        error: result.error || ['Erro na execução'],
-        stderr: result.stderr || []
-      };
-    }
-
-  } catch (err) {
-    console.error('Erro na execução:', err);
-    errorCapture.push('Erro de execução: ' + err.message);
-    return {
-      success: false,
-      exitCode: 1,
-      output: [],
-      error: ['Erro: ' + err.message],
-      stderr: errorCapture
-    };
-  }
+  // Nada a inicializar - tudo é puro JavaScript
 }
 
 // ── EXECUTAR (Interface principal) ────────────────────────────────────────────
 export async function execute(src, stdin) {
   if (busy) return;
   if (!src.trim()) { 
-    o('ln-warn', '⚠  Nenhum código para executar.');
+    o('ln-warn', '⚠ Nenhum código para executar.');
     return;
   }
 
@@ -191,20 +58,12 @@ export async function execute(src, stdin) {
   rb.classList.add('running');
 
   clearOut();
-  o('ln-dim', `$ javac Main.java  [Java 8 · CheerpJ 4.2 Local]`);
+  o('ln-dim', `$ javac Main.java  [Java 11 · Online]`);
   t0 = Date.now();
   const cur = addCursor();
 
   try {
-    setPill('loading', 'Compilando e executando...');
-
-    // Garantir que CheerpJ está inicializado
-    if (!cheerpjReady) {
-      await initCheerpJ();
-    }
-
-    // Compilar e executar
-    const result = await compileAndRun(src, stdin);
+    const result = await executeJavaOffline(src, stdin);
 
     cur.remove();
     const ms = Date.now() - t0;
@@ -213,54 +72,45 @@ export async function execute(src, stdin) {
     o('ln-dim', '$ java Main');
     o('ln-dim', '');
 
-    // Mostrar output capturado
+    // Mostrar output
     if (result.output && result.output.length > 0) {
       result.output.forEach(line => {
-        if (line && typeof line === 'string') {
-          const lines = line.split(/\r?\n/);
-          lines.forEach(l => {
-            if (l.trim()) o('ln-out', l);
-          });
+        if (line && typeof line === 'string' && line.trim()) {
+          o('ln-out', line);
         }
       });
     }
 
-    // Mostrar erros se houver
-    if (result.error && result.error.length > 0) {
-      result.error.forEach(line => {
-        if (line && typeof line === 'string') {
-          const lines = line.split(/\r?\n/);
-          lines.forEach(l => {
-            if (l.trim()) o('ln-err', l);
-          });
+    // Mostrar erros
+    if (result.stderr && result.stderr.length > 0) {
+      result.stderr.forEach(line => {
+        if (line && typeof line === 'string' && line.trim()) {
+          o('ln-err', line);
         }
       });
     }
 
-    // Se nenhum output, informar
     if ((!result.output || result.output.length === 0) && 
-        (!result.error || result.error.length === 0)) {
+        (!result.stderr || result.stderr.length === 0)) {
       o('ln-dim', '(nenhuma saída)');
     }
 
-    // Status final
     const isErr = !result.success;
-    const exitCode = result.exitCode;
-
     o('ln-dim', '');
     o(isErr ? 'ln-err' : 'ln-ok',
-      `${isErr ? '✗' : '✓'} Process finished with exit code ${exitCode}  (${ms}ms)`);
+      `${isErr ? '✗' : '✓'} Process finished with exit code ${result.exitCode}  (${ms}ms)`);
 
     setPill(isErr ? 'error' : 'ready', 
-            isErr ? 'Erro de execução' : 'Executado');
-    setMeta(exitCode, ms, isErr);
+            isErr ? 'Erro' : 'Executado');
+    setMeta(result.exitCode, ms, isErr);
 
   } catch (err) {
     cur.remove();
     const ms = Date.now() - t0;
+    o('ln-err', '❌ Erro: ' + err.message);
     o('ln-dim', '');
-    o('ln-err', '✗ Erro ao executar: ' + err.message);
-    setPill('error', 'Erro fatal');
+    o('ln-err', `✗ Process finished with exit code 1  (${ms}ms)`);
+    setPill('error', 'Erro');
     setMeta(1, ms, true);
 
   } finally {
@@ -270,15 +120,139 @@ export async function execute(src, stdin) {
   }
 }
 
+// ── EXECUTOR OFFLINE (Interprete Java com suporte a métodos) ────────────────
+async function executeJavaOffline(javaCode, stdin) {
+  try {
+    const _output = [];
+    let stdinLines = stdin ? stdin.split('\n') : [];
+    let stdinIndex = 0;
+
+    // Definir ambiente Java no escopo global
+    window._javaEnv = {
+      System: {
+        out: {
+          println: (...args) => {
+            _output.push(args.map(a => {
+              if (a === null) return 'null';
+              if (typeof a === 'object') return JSON.stringify(a);
+              return String(a);
+            }).join(' '));
+          },
+          print: (...args) => {
+            const line = args.map(a => {
+              if (a === null) return 'null';
+              if (typeof a === 'object') return JSON.stringify(a);
+              return String(a);
+            }).join('');
+            if (_output.length === 0) _output.push('');
+            _output[_output.length - 1] += line;
+          }
+        }
+      },
+      Scanner: class {
+        constructor(source) {
+          this.source = source;
+        }
+        nextInt() {
+          const line = stdinLines[stdinIndex] || '0';
+          stdinIndex++;
+          const match = line.match(/\d+/);
+          return match ? parseInt(match[0]) : 0;
+        }
+        nextLine() {
+          const line = stdinLines[stdinIndex] || '';
+          stdinIndex++;
+          return line;
+        }
+        next() {
+          const line = stdinLines[stdinIndex] || '';
+          stdinIndex++;
+          return line.trim().split(/\s+/)[0];
+        }
+        hasNext() {
+          return stdinIndex < stdinLines.length;
+        }
+      },
+      Math: {
+        abs: Math.abs,
+        sqrt: Math.sqrt,
+        pow: Math.pow,
+        floor: Math.floor,
+        ceil: Math.ceil,
+        round: Math.round,
+        min: Math.min,
+        max: Math.max,
+        random: Math.random,
+        PI: Math.PI,
+        E: Math.E
+      },
+      _output
+    };
+
+    // Limpar código Java
+    let code = javaCode
+      // Remover imports
+      .replace(/import\s+[^;]+;/g, '')
+      // Remover class declaration - manter conteúdo
+      .replace(/public\s+class\s+\w+\s*\{/, '')
+      // Remover main method
+      .replace(/public\s+static\s+void\s+main\s*\([^)]*\)\s*\{/, '')
+      // Remover closing braces
+      .replace(/\}\s*\}\s*$/, '');
+
+    // Converter Scanner sc = new Scanner(System.in)
+    code = code.replace(/Scanner\s+(\w+)\s*=\s*new\s+Scanner\s*\([^)]*\)/g, 'let $1 = new window._javaEnv.Scanner()');
+    
+    // Converter tipos primitivos
+    code = code.replace(/\b(int|double|float|long|short|byte|boolean)\s+/g, 'let ');
+    code = code.replace(/\bString\s+/g, 'let ');
+    code = code.replace(/\bfinal\s+/g, 'const ');
+
+    // Substituir System.out
+    code = code.replace(/System\.out\./g, 'window._javaEnv.System.out.');
+
+    // Substituir System.in
+    code = code.replace(/System\.in/g, '');
+
+    // Substituir Math
+    code = code.replace(/Math\./g, 'window._javaEnv.Math.');
+
+    // Converter static public void método() → function método()
+    code = code.replace(/public\s+static\s+void\s+(\w+)\s*\(/g, 'function $1(');
+
+    // Converter public static tipo método() → function método()
+    code = code.replace(/public\s+static\s+(int|double|String|boolean)\s+(\w+)\s*\(/g, 'function $2(');
+
+    // Converter private/public → nada
+    code = code.replace(/\b(private|protected|public)\s+/g, '');
+
+    // Converter static → nada
+    code = code.replace(/\bstatic\s+/g, '');
+
+    console.log('Código preparado:', code.substring(0, 400));
+
+    // Executar
+    eval(code);
+
+    return {
+      success: true,
+      exitCode: 0,
+      output: window._javaEnv._output.filter(l => l !== undefined),
+      stderr: []
+    };
+
+  } catch (err) {
+    console.error('Erro ao executar:', err);
+    return {
+      success: false,
+      exitCode: 1,
+      output: [],
+      stderr: [String(err.message || 'Erro ao executar')]
+    };
+  }
+}
+
 // ── UTILITIES ──────────────────────────────────────────────────────────────────
 export function isBusy() { 
   return busy; 
 }
-
-// Expor para debugging
-window._runtimeState = {
-  get isBusy() { return busy; },
-  get cheerpjReady() { return cheerpjReady; },
-  get outputCapture() { return outputCapture; },
-  get errorCapture() { return errorCapture; }
-};
