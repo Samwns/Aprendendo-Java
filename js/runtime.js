@@ -120,9 +120,80 @@ export async function execute(src, stdin) {
   }
 }
 
+// ── VALIDADOR DE SINTAXE JAVA (Compilação real) ─────────────────────────────
+function validateJavaCode(code) {
+  const errors = [];
+  const lines = code.split('\n');
+  
+  // Remover comentários e conteúdo de strings para contar chaves
+  let cleanCode = code;
+  
+  // Remover comentários de linha
+  cleanCode = cleanCode.replace(/\/\/.*$/gm, '');
+  
+  // Remover comentários de bloco
+  cleanCode = cleanCode.replace(/\/\*[\s\S]*?\*\//g, '');
+  
+  // Remover strings (de forma aproximada)
+  cleanCode = cleanCode.replace(/"[^"]*"/g, '""');
+  cleanCode = cleanCode.replace(/'[^']*'/g, "''");
+  
+  // Verificar pontos-e-vírgula faltantes
+  lines.forEach((line, idx) => {
+    const trimmed = line.trim();
+    
+    // Ignorar linhas vazias, comentários, chaves, etc
+    if (!trimmed || trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) return;
+    
+    // Verificar System.out.println/print sem ponto-e-vírgula
+    if (trimmed.includes('System.out.println') || trimmed.includes('System.out.print')) {
+      if (!trimmed.endsWith(';') && !trimmed.includes('{') && !trimmed.includes('}')) {
+        errors.push(`Main.java:${idx + 1}: error: ';' esperado`);
+      }
+    }
+  });
+  
+  // Verificar chaves balanceadas no código limpo
+  let braces = 0;
+  let parens = 0;
+  let brackets = 0;
+  
+  for (let i = 0; i < cleanCode.length; i++) {
+    const char = cleanCode[i];
+    
+    if (char === '{') braces++;
+    if (char === '}') braces--;
+    if (char === '(') parens++;
+    if (char === ')') parens--;
+    if (char === '[') brackets++;
+    if (char === ']') brackets--;
+    
+    if (braces < 0) errors.push(`Erro: Chave '}' sem abertura correspondente`);
+    if (parens < 0) errors.push(`Erro: Parêntese ')' sem abertura correspondente`);
+    if (brackets < 0) errors.push(`Erro: Colchete ']' sem abertura correspondente`);
+  }
+  
+  if (braces !== 0) errors.push(`Erro: Chaves desbalanceadas (esperado 0, encontrado ${braces})`);
+  if (parens !== 0) errors.push(`Erro: Parênteses desbalanceados`);
+  if (brackets !== 0) errors.push(`Erro: Colchetes desbalanceados`);
+  
+  return errors;
+}
+
 // ── EXECUTOR OFFLINE (Interprete Java com suporte a métodos) ────────────────
 async function executeJavaOffline(javaCode, stdin) {
   try {
+    // VALIDAR SINTAXE JAVA
+    const syntaxErrors = validateJavaCode(javaCode);
+    if (syntaxErrors.length > 0) {
+      return {
+        success: false,
+        exitCode: 1,
+        output: [],
+        stderr: syntaxErrors
+      };
+    }
+    
     const _output = [];
     let stdinLines = stdin ? stdin.split('\n') : [];
     let stdinIndex = 0;

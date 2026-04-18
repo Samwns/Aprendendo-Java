@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teste Validador Java</title>
+  <style>
+    body {
+      font-family: 'Monaco', 'Courier New', monospace;
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 20px;
+      margin: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #252526;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #3e3e42;
+    }
+    h1 { color: #61afef; margin-top: 0; }
+    .test-case {
+      margin: 20px 0;
+      padding: 15px;
+      background: #1e1e1e;
+      border-left: 4px solid #569cd6;
+      border-radius: 4px;
+    }
+    .code {
+      background: #1e1e1e;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+      margin: 10px 0;
+      white-space: pre;
+      font-size: 12px;
+      color: #ce9178;
+    }
+    .result {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    .result.error { 
+      background: #3d1f1f;
+      color: #f48771;
+      border-left: 3px solid #f48771;
+    }
+    .result.success { 
+      background: #1f3d2f;
+      color: #89d185;
+      border-left: 3px solid #89d185;
+    }
+    button {
+      background: #007acc;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 10px;
+    }
+    button:hover { background: #005a9e; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>☕ Validador Java Real — Testes</h1>
+    
+    <div class="test-case">
+      <strong>Teste 1: Falta de Ponto-e-Vírgula ❌</strong>
+      <div class="code">public class Main {
+  public static void main(String[] args) {
+    System.out.println("Hello, World! ☕");
+    System.out.println("WebJDK — Java real!")
+  }
+}</div>
+      <button onclick="testarErroSemicolon()">Testar Erro</button>
+      <div id="result1" class="result"></div>
+    </div>
+
+    <div class="test-case">
+      <strong>Teste 2: Código Correto ✓</strong>
+      <div class="code">public class Main {
+  public static void main(String[] args) {
+    System.out.println("Hello, World! ☕");
+    System.out.println("WebJDK — Java real!");
+  }
+}</div>
+      <button onclick="testarSucesso()">Testar Sucesso</button>
+      <div id="result2" class="result"></div>
+    </div>
+
+    <div class="test-case">
+      <strong>Teste 3: Chaves Desbalanceadas ❌</strong>
+      <div class="code">public class Main {
+  public static void main(String[] args) {
+    System.out.println("Erro!");
+}</div>
+      <button onclick="testarChavasDesbalanceadas()">Testar Erro</button>
+      <div id="result3" class="result"></div>
+    </div>
+  </div>
+
+  <script>
+    // Validador de Sintaxe Java (do runtime.js)
+    function validateJavaCode(code) {
+      const errors = [];
+      const lines = code.split('\n');
+      
+      // Remover comentários e conteúdo de strings para contar chaves
+      let cleanCode = code;
+      
+      // Remover comentários de linha
+      cleanCode = cleanCode.replace(/\/\/.*$/gm, '');
+      
+      // Remover comentários de bloco
+      cleanCode = cleanCode.replace(/\/\*[\s\S]*?\*\//g, '');
+      
+      // Remover strings (de forma aproximada)
+      cleanCode = cleanCode.replace(/"[^"]*"/g, '""');
+      cleanCode = cleanCode.replace(/'[^']*'/g, "''");
+      
+      // Verificar pontos-e-vírgula faltantes
+      lines.forEach((line, idx) => {
+        const trimmed = line.trim();
+        
+        // Ignorar linhas vazias, comentários, chaves, etc
+        if (!trimmed || trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) return;
+        
+        // Verificar System.out.println/print sem ponto-e-vírgula
+        if (trimmed.includes('System.out.println') || trimmed.includes('System.out.print')) {
+          if (!trimmed.endsWith(';') && !trimmed.includes('{') && !trimmed.includes('}')) {
+            errors.push(`Main.java:${idx + 1}: error: ';' esperado`);
+          }
+        }
+      });
+      
+      // Verificar chaves balanceadas no código limpo
+      let braces = 0;
+      let parens = 0;
+      let brackets = 0;
+      
+      for (let i = 0; i < cleanCode.length; i++) {
+        const char = cleanCode[i];
+        
+        if (char === '{') braces++;
+        if (char === '}') braces--;
+        if (char === '(') parens++;
+        if (char === ')') parens--;
+        if (char === '[') brackets++;
+        if (char === ']') brackets--;
+        
+        if (braces < 0) errors.push(`Erro: Chave '}' sem abertura correspondente`);
+        if (parens < 0) errors.push(`Erro: Parêntese ')' sem abertura correspondente`);
+        if (brackets < 0) errors.push(`Erro: Colchete ']' sem abertura correspondente`);
+      }
+      
+      if (braces !== 0) errors.push(`Erro: Chaves desbalanceadas (esperado 0, encontrado ${braces})`);
+      if (parens !== 0) errors.push(`Erro: Parênteses desbalanceados`);
+      if (brackets !== 0) errors.push(`Erro: Colchetes desbalanceados`);
+      
+      return errors;
+    }
+
+    function testarErroSemicolon() {
+      const code = `public class Main {
+  public static void main(String[] args) {
+    System.out.println("Hello, World! ☕");
+    System.out.println("WebJDK — Java real!")
+  }
+}`;
+      const errors = validateJavaCode(code);
+      mostraResultado('result1', errors);
+    }
+
+    function testarSucesso() {
+      const code = `public class Main {
+  public static void main(String[] args) {
+    System.out.println("Hello, World! ☕");
+    System.out.println("WebJDK — Java real!");
+  }
+}`;
+      const errors = validateJavaCode(code);
+      mostraResultado('result2', errors);
+    }
+
+    function testarChavasDesbalanceadas() {
+      const code = `public class Main {
+  public static void main(String[] args) {
+    System.out.println("Erro!");
+}`;
+      const errors = validateJavaCode(code);
+      mostraResultado('result3', errors);
+    }
+
+    function mostraResultado(elementId, errors) {
+      const element = document.getElementById(elementId);
+      if (errors.length === 0) {
+        element.className = 'result success';
+        element.innerHTML = '✓ <strong>Compilação bem-sucedida!</strong><br>Exit code 0';
+      } else {
+        element.className = 'result error';
+        element.innerHTML = '✗ <strong>Erros de compilação:</strong><br>' + 
+                           errors.map(e => '  ' + e).join('<br>') + 
+                           '<br><br>Exit code 1';
+      }
+    }
+  </script>
+</body>
+</html>

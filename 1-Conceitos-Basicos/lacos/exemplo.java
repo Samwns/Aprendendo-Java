@@ -41,7 +41,8 @@ public class Main {
     // EXEMPLO 6: CONTINUE (pular iteração)
     System.out.println("\n=== FOR com CONTINUE ===");
     for (int i = 1; i <= 5; i++) {
-      if (i == 3) continue;  // Pula o 3\n      System.out.println(i);
+      if (i == 3) continue;  // Pula o 3
+      System.out.println(i);
     }
   }
 }
