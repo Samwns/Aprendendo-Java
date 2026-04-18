@@ -12,41 +12,54 @@
 
 ## 🌐 WebJDK — Java no Navegador
 
-Este repositório inclui um **WebJDK** que permite executar código Java diretamente no navegador usando **CheerpJ** (execução local via WebAssembly).
+Este repositório inclui um **WebJDK** que permite executar código Java **com compilação e execução reais** usando **javac** e **Java** no backend.
 
-### 🚀 Como Usar
+### 🚀 Como Usar (Desenvolvimento Local)
 
-1. **Para desenvolvimento local**: Execute um servidor web na raiz do projeto
-   ```bash
-   python3 -m http.server 8080
-   ```
-   Acesse: http://localhost:8080
+**Pré-requisito:** Java 21+ instalado (`java -version`)
 
-2. **Para Git Pages**: O CheerpJ funciona diretamente no Git Pages
-   - Acesse: [https://samwns.github.io/Aprendendo-Java/](https://samwns.github.io/Aprendendo-Java/)
-   - **Nota**: CheerpJ roda inteiramente no navegador, sem servidores externos
+**Opção 1 - Com Python Server (Recomendado):**
+```bash
+# Terminal 1: Inicie o servidor Python (porta 8888)
+cd /home/samns/Arquivos/Repos/Aprendendo-Java
+python3 server.py
 
-3. **Escreva seu código** no editor Monaco
-4. **Clique em "▶ Executar"** ou pressione `Ctrl+Enter`
-5. **Veja a saída** no terminal integrado
+# Terminal 2: Inicie o servidor web (porta 8080)
+python3 -m http.server 8080
+```
+Acesse: http://localhost:8080
+
+**Opção 2 - Apenas servidor web (sem execução real):**
+```bash
+python3 -m http.server 8080
+```
 
 ### ✨ Funcionalidades
 
-- ✅ **Editor Monaco** com syntax highlighting e IntelliSense
-- ✅ **Execução local** via CheerpJ (Java 8)
+- ✅ **Editor Monaco** com syntax highlighting e IntelliSense para Java
+- ✅ **Compilação real** via `javac` (Java 21+)
+- ✅ **Execução real** com saída exata
 - ✅ **Interface responsiva** para desktop e mobile
 - ✅ **Terminal integrado** com saída em tempo real
-- ✅ **Compilação e execução** simuladas no navegador
+- ✅ **Suporte a stdin** para programas interativos
+- ✅ **Múltiplos tipos de dados** (int, double, String, boolean, arrays, etc)
 - ✅ **100% gratuito** e sem contas necessárias
 
-### ✨ Funcionalidades
+### 🔧 Arquitetura
 
-- ✅ **Editor Monaco** com syntax highlighting e IntelliSense
-- ✅ **Execução online** via JDoodle API (gratuita)
-- ✅ **Múltiplas versões Java** (8, 10, 11, 14, 17)
-- ✅ **Interface responsiva** para desktop e mobile
-- ✅ **Terminal integrado** com saída em tempo real
-- ✅ **Entrada padrão** (stdin) suportada
+| Componente | Descrição |
+|-----------|-----------|
+| `index.html` | Interface web do editor |
+| `js/runtime.js` | Cliente que envia código para servidor |
+| `server.py` | Backend Python que compila e executa Java |
+| `javac` / `java` | Compilador e executor reais do sistema |
+
+### 📝 Limitações
+
+- **GitHub Pages**: Não funciona (requer backend Python)
+  - Alternativas: [Replit](https://replit.com), [Render](https://render.com), API de compilação externa
+- **Sem internet**: Funciona totalmente offline (se Java estiver instalado)
+- **Timeout**: Limite de 30 segundos por execução
 
 ---
 
@@ -233,6 +246,58 @@ sudo pacman -S intellij-idea-community-edition
 ✅ [**Condicionais**](1-Conceitos-Basicos/condicionais/README.md) 🔀: `if`, `else`, `else if`, `switch`.  
 ✅ [**Laços de Repetição**](1-Conceitos-Basicos/lacos/README.md) 🔄: `for`, `while`, `do-while`.  
 ✅ [**Orientação a Objetos**](1-Conceitos-Basicos/oop/README.md) 🏗️: Classes, objetos, herança, polimorfismo.  
+
+### 📝 Exemplos Testados no WebJDK
+
+#### IF/ELSE IF/ELSE
+```java
+int idade = 25;
+if (idade >= 18) {
+    System.out.println("Maior de idade");
+} else {
+    System.out.println("Menor de idade");
+}
+```
+
+#### FOR
+```java
+for (int i = 1; i <= 3; i++) {
+    System.out.println("i = " + i);
+}
+```
+
+#### WHILE
+```java
+int j = 1;
+while (j <= 3) {
+    System.out.println("j = " + j);
+    j++;
+}
+```
+
+#### DO-WHILE
+```java
+int x = 1;
+do {
+    System.out.println("x = " + x);
+    x++;
+} while (x <= 3);
+```
+
+#### SWITCH
+```java
+int dia = 3;
+switch (dia) {
+    case 1:
+        System.out.println("Segunda");
+        break;
+    case 3:
+        System.out.println("Quarta");
+        break;
+    default:
+        System.out.println("Outro dia");
+}
+```
 
 🔄 O repositório será atualizado **aos poucos**! 🚧
 
