@@ -156,47 +156,67 @@ export async function execute(src, stdin) {
     // 2. Injeta o código-fonte no filesystem virtual /str/
     await cheerpjAddStringFile(SRC_PATH, src);
 
-    // 3. Compilar + executar via WebJDKRunner
+    // Compilar usando javac do CheerpJ
     setPill('loading', 'Compilando...');
-
-    const classpath = `${JARS_PATH}runner.jar:/maven/ecj-3.36.0.jar`;
 
     // Usa timestamp para diretório único → evita conflito entre execuções
     const runId    = Date.now().toString(36);
     const classDir = `/files/cls_${runId}/`;
-    const outFile  = `/files/out_${runId}.txt`;
-    const errFile  = `/files/err_${runId}.txt`;
 
-    await cheerpjRunMain(
-      'WebJDKRunner',
-      classpath,
+    const compileResult = await cheerpjRunMain(
+      'javac',
+      '',
       [
-        SRC_PATH,        // arquivo fonte
-        classDir,        // dir de saída das classes
-        outFile,         // stdout capturado
-        errFile,         // stderr + erros de compilação
-        stdin.replace(/\\n/g, '\n'), // stdin
-        rt.srcLevel,     // versão Java alvo
+        '-cp', '/maven/ecj-3.36.0.jar',
+        '-d', classDir,
+        '-source', rt.srcLevel,
+        '-target', rt.srcLevel,
+        SRC_PATH
       ]
+    );
+
+    // Verificar se compilou (checando se o .class foi criado)
+    try {
+      await cjFileBlob(`${classDir}Main.class`);
+    } catch {
+      // Erro de compilação - tentar ler stderr
+      const compileError = await readVfsFile('/dev/stderr');
+      o('ln-dim', '');
+      o('ln-err', '✗ Erro de compilação:');
+      if (compileError) {
+        compileError.split('\n').forEach(line => {
+          const clean = line.replace('/str/', '').replace(/^-+$/, '');
+          if (clean.trim()) o('ln-err', '  ' + clean);
+        });
+      } else {
+        o('ln-err', '  Erro desconhecido na compilação');
+      }
+      o('ln-dim', '');
+      o('ln-dim', `Process finished with exit code 1  (${ms}ms)`);
+      setPill('error', 'Erro de compilação');
+      setMeta(1, ms, true);
+      return;
+    }
+
+    // Executar a classe compilada
+    setPill('loading', 'Executando...');
+    o('ln-dim', '$ java Main');
+
+    const runResult = await cheerpjRunMain(
+      'Main',
+      classDir,
+      []
     );
 
     cur.remove();
     const ms = Date.now() - t0;
 
-    // 4. Ler resultados
-    const stdout = await readVfsFile(outFile);
-    const stderr = await readVfsFile(errFile);
-
     // ── Verificar erro de compilação
-    if (stderr.startsWith('COMPILE_ERROR')) {
-      const compileMsg = stderr.replace('COMPILE_ERROR\n', '').trim();
+    if (compileError) {
       o('ln-dim', '');
       o('ln-err', '✗ Erro de compilação:');
-      // Formata as linhas do ECJ de forma mais limpa
-      compileMsg.split('\n').forEach(line => {
-        const clean = line
-          .replace('/str/', '')   // remove prefixo do path virtual
-          .replace(/^-+$/, '');   // remove linhas de traços
+      compileError.split('\n').forEach(line => {
+        const clean = line.replace('/str/', '').replace(/^-+$/, '');
         if (clean.trim()) o('ln-err', '  ' + clean);
       });
       o('ln-dim', '');
@@ -211,17 +231,17 @@ export async function execute(src, stdin) {
     o('ln-dim', '$ java Main');
     o('ln-dim', '');
 
-    if (stdout.trimEnd()) {
-      stdout.trimEnd().split('\n').forEach(l => o('ln-out', l));
+    if (runOutput.trimEnd()) {
+      runOutput.trimEnd().split('\n').forEach(l => o('ln-out', l));
     }
 
-    if (stderr.trim()) {
+    if (runError.trim()) {
       o('ln-dim', '');
       o('ln-err', '— stderr —');
-      stderr.trim().split('\n').forEach(l => o('ln-err', '  ' + l));
+      runError.trim().split('\n').forEach(l => o('ln-err', '  ' + l));
     }
 
-    const isErr = stderr.includes('Exception') || stderr.includes('Error');
+    const isErr = runError.includes('Exception') || runError.includes('Error');
     const exit  = isErr ? 1 : 0;
 
     o('ln-dim', '');
