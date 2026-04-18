@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>☕ WebJDK — Terminal Java Online</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+
+  <!-- Monaco AMD loader (deve vir antes dos módulos) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+
+  <!-- CheerpJ 4.2 — JVM WebAssembly para o navegador -->
+  <script src="https://cjrtnc.leaningtech.com/4.2/loader.js"></script>
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ── TOPBAR ─────────────────────────────────────────────────────── -->
+  <header class="topbar">
+    <div class="logo">☕ <em>Web</em>JDK</div>
+    <div class="ver-badge">Java 17</div>
+
+    <div class="filetab">
+      <div class="dot"></div>
+      <span>Main.java</span>
+    </div>
+
+    <!-- Seletor de runtime -->
+    <div class="runtime-wrap">
+      <span class="runtime-lbl">Runtime:</span>
+      <select id="runtimeSelect" title="Selecionar versão Java">
+        <option value="java17" selected>☕ Java 17 LTS (CheerpJ · preview)</option>
+        <option value="java11">☕ Java 11 LTS (CheerpJ)</option>
+        <option value="java8">☕ Java 8 (CheerpJ)</option>
+        <option value="java21-soon" disabled>⏳ Java 21 — CheerpJ 6.0 (2026)</option>
+      </select>
+    </div>
+
+    <div class="topbar-right">
+      <!-- Status -->
+      <div class="pill">
+        <div class="pill-dot" id="pd"></div>
+        <span id="ps">Iniciando...</span>
+      </div>
+
+      <!-- Botão limpar -->
+      <button class="btn btn-ghost" onclick="doClear()" title="Limpar terminal">
+        🗑 Limpar
+      </button>
+
+      <!-- Botão executar -->
+      <button class="btn btn-run" id="rb" onclick="run()" title="Executar código (Ctrl+Enter)">
+        <div class="spinner"></div>
+        <span class="rl">▶ Executar</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ── WORKSPACE ──────────────────────────────────────────────────── -->
+  <div class="workspace">
+
+    <!-- EDITOR -->
+    <div class="ed-pane">
+      <div class="pane-hdr">
+        <span>📝</span> Editor — Main.java
+        <div class="pane-hdr-actions">
+          <span style="font-size:.6rem;color:var(--muted)">
+            Ctrl+Space: sugestões &nbsp;·&nbsp; Ctrl+/: comentar
+          </span>
+        </div>
+      </div>
+      <!-- Monaco monta aqui -->
+      <div id="monacoContainer"></div>
+    </div>
+
+    <!-- TERMINAL -->
+    <div class="term-pane">
+      <div class="term-bar">
+        <div class="wm-dots">
+          <div class="wm-dot wm-close"></div>
+          <div class="wm-dot wm-min"></div>
+          <div class="wm-dot wm-max"></div>
+        </div>
+        <div class="term-title">bash — java Main</div>
+      </div>
+
+      <!-- Saída -->
+      <div id="out"></div>
+
+      <!-- Entrada (stdin) -->
+      <div class="stdin-row">
+        <span class="stdin-lbl">stdin ›</span>
+        <input
+          id="stdin"
+          type="text"
+          placeholder='entrada para Scanner  (múltiplas linhas: separe com \n)'
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </div>
+
+      <!-- Meta: exit code + tempo -->
+      <div class="meta">
+        <span id="mExit">—</span>
+        <span id="mTime">—</span>
+        <span id="mBadge" class="bdg"></span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── STATUS BAR ─────────────────────────────────────────────────── -->
+  <footer class="sbar">
+    <span>☕ WebJDK</span>
+    <span id="sbRuntime">Java 17 · CheerpJ · WebAssembly</span>
+    <span id="sbL">— linhas</span>
+    <div class="sbar-r">
+      <span>Ctrl+Enter → Executar</span>
+      <span>Ctrl+Space → Sugestões</span>
+      <span>Ctrl+/ → Comentar</span>
+    </div>
+  </footer>
+
+</div>
+
+<!-- Módulos ES — main.js importa editor.js, terminal.js, runtime.js -->
+<script type="module" src="js/main.js"></script>
+
+</body>
+</html>
