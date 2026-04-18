@@ -20,6 +20,10 @@ const CLASS_DIR    = '/files/classes/';
 const OUT_FILE     = '/files/output.txt';
 const ERR_FILE     = '/files/error.txt';
 
+// URLs dos JARs no Maven Central
+const ECJ_URL      = 'https://repo1.maven.org/maven2/org/eclipse/jdt/ecj/3.36.0/ecj-3.36.0.jar';
+const RUNNER_URL   = '/jars/runner.jar'; // runner ainda local por enquanto
+
 // ── ESTADO GLOBAL ─────────────────────────────────────────────────────────────
 let cjInitialized  = false;
 let cjInitPending  = null;   // Promise de inicialização em andamento
@@ -100,6 +104,8 @@ async function ensureCheerpJ(javaVersion) {
       mountPoints: [
         // Monta a pasta /jars do servidor no filesystem virtual /app/jars/
         { type: 'httpMount', path: '/app/', url: '/' },
+        // ECJ do Maven Central
+        { type: 'httpMount', path: '/maven/', url: 'https://repo1.maven.org/maven2/org/eclipse/jdt/ecj/3.36.0/' },
       ],
     });
 
@@ -153,7 +159,7 @@ export async function execute(src, stdin) {
     // 3. Compilar + executar via WebJDKRunner
     setPill('loading', 'Compilando...');
 
-    const classpath = `${JARS_PATH}runner.zip:${JARS_PATH}ecj.zip`;
+    const classpath = `${JARS_PATH}runner.jar:/maven/ecj-3.36.0.jar`;
 
     // Usa timestamp para diretório único → evita conflito entre execuções
     const runId    = Date.now().toString(36);
