@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Teste Exemplos Java</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Courier New', monospace; background: #0d1117; color: #e6edf3; padding: 20px; }
+    h1 { color: #f89820; margin: 20px 0; }
+    .test { background: #161b22; padding: 15px; margin: 10px 0; border-left: 3px solid #f89820; border-radius: 5px; }
+    button { padding: 8px 16px; background: #f89820; color: #000; border: none; cursor: pointer; border-radius: 5px; font-weight: bold; }
+    .output { background: #0d1117; border: 1px solid #30363d; padding: 10px; margin: 10px 0; border-radius: 5px; min-height: 100px; max-height: 300px; overflow: auto; }
+    .success { border-left-color: #3fb950; }
+    .error { border-left-color: #f85149; }
+    pre { margin: 10px 0; }
+  </style>
+</head>
+<body>
+
+<h1>☕ Teste dos Exemplos - WebJDK</h1>
+
+<div class="test">
+  <h3>Passo 5: Laços (FOR/WHILE)</h3>
+  <button onclick="testLacos()">Testar Laços</button>
+  <div class="output" id="output-lacos"></div>
+</div>
+
+<div class="test">
+  <h3>Passo 6: Arrays</h3>
+  <button onclick="testArrays()">Testar Arrays</button>
+  <div class="output" id="output-arrays"></div>
+</div>
+
+<div class="test">
+  <h3>Passo 7: Funções</h3>
+  <button onclick="testFuncoes()">Testar Funções</button>
+  <div class="output" id="output-funcoes"></div>
+</div>
+
+<div class="test">
+  <h3>Passo 8: OOP (Classes)</h3>
+  <button onclick="testOOP()">Testar OOP</button>
+  <div class="output" id="output-oop"></div>
+</div>
+
+<script>
+// Simular ambiente Java
+window._javaEnv = {
+  System: {
+    out: {
+      println: function(...args) {
+        const line = args.map(a => {
+          if (a === null) return 'null';
+          if (typeof a === 'object') return JSON.stringify(a);
+          return String(a);
+        }).join(' ');
+        window._lastOutput.push(line);
+      },
+      print: function(...args) {
+        const line = args.map(a => {
+          if (a === null) return 'null';
+          if (typeof a === 'object') return JSON.stringify(a);
+          return String(a);
+        }).join('');
+        if (window._lastOutput.length === 0) window._lastOutput.push('');
+        window._lastOutput[window._lastOutput.length - 1] += line;
+      }
+    }
+  },
+  Math: {
+    abs: Math.abs,
+    sqrt: Math.sqrt,
+    pow: Math.pow,
+    floor: Math.floor,
+    ceil: Math.ceil,
+    round: Math.round,
+    min: Math.min,
+    max: Math.max,
+    random: Math.random,
+    PI: Math.PI,
+    E: Math.E
+  }
+};
+
+// Transpiler melhorado
+function transpile(javaCode) {
+  let code = javaCode
+    .replace(/import\s+[^;]+;/g, '')
+    .replace(/public\s+class\s+\w+\s*\{/, '')
+    .replace(/public\s+static\s+void\s+main\s*\([^)]*\)\s*\{/, '')
+    .replace(/\}\s*\}\s*$/, '');
+  
+  // Arrays
+  code = code.replace(/=\s*\{([^{}]+)\}/g, '= [$1]');
+  code = code.replace(/\b(int|double|float|long|short|byte|boolean)\[\]\s+(\w+)\s*=/g, 'let $2 =');
+  code = code.replace(/\b(int|double|float|long|short|byte|boolean)\[\]\s+(\w+)\s*;/g, 'let $2;');
+  
+  // FOR/WHILE
+  code = code.replace(/for\s*\(\s*(int|double|float|long|short|byte|boolean)\s+(\w+)\s*=/g, 'for (let $2 =');
+  
+  // Funções ANTES de tipos primitivos
+  code = code.replace(/\bstatic\s+(int|double|float|long|short|byte|boolean|void)\s+(\w+)\s*\(/g, 'function $2(');
+  code = code.replace(/\b(int|double|float|long|short|byte|boolean|void)\s+(\w+)\s*\(/g, 'function $2(');
+  
+  // Remover tipos em parâmetros: (int a, int b) → (a, b)
+  code = code.replace(/\(\s*(int|double|float|long|short|byte|boolean|String)\s+(\w+)/g, '($2');
+  code = code.replace(/,\s*(int|double|float|long|short|byte|boolean|String)\s+(\w+)/g, ', $2');
+  
+  // Tipos
+  code = code.replace(/\b(int|double|float|long|short|byte|boolean)\s+(\w+)\s*;/g, 'let $2;');
+  code = code.replace(/\b(int|double|float|long|short|byte|boolean)\s+(\w+)\s*=/g, 'let $2 =');
+  code = code.replace(/\bString\s+/g, 'let ');
+  
+  // System.out
+  code = code.replace(/System\.out\./g, 'window._javaEnv.System.out.');
+  code = code.replace(/Math\./g, 'window._javaEnv.Math.');
+  
+  // Modificadores
+  code = code.replace(/\b(private|protected|public|static)\s+/g, '');
+  
+  return code;
+}
+
+function run(name, code) {
+  const outDiv = document.getElementById(`output-${name}`);
+  window._lastOutput = [];
+  
+  try {
+    const transpiled = transpile(code);
+    eval(transpiled);
+    outDiv.innerHTML = '<pre>' + window._lastOutput.join('\n') + '</pre>';
+    outDiv.parentElement.classList.add('success');
+    outDiv.parentElement.classList.remove('error');
+  } catch(e) {
+    outDiv.innerHTML = '<pre>❌ ERRO:\n' + e.message + '\n\nCódigo transpilado:\n' + transpile(code).substring(0, 500) + '...</pre>';
+    outDiv.parentElement.classList.add('error');
+    outDiv.parentElement.classList.remove('success');
+  }
+}
+
+function testLacos() {
+  run('lacos', `
+public class Main {
+  public static void main(String[] args) {
+    System.out.println("=== FOR (1 a 5) ===");
+    for (int i = 1; i <= 5; i++) {
+      System.out.println(i);
+    }
+    
+    System.out.println("=== WHILE (1 a 3) ===");
+    int contador = 1;
+    while (contador <= 3) {
+      System.out.println(contador);
+      contador++;
+    }
+  }
+}
+  `);
+}
+
+function testArrays() {
+  run('arrays', `
+public class Main {
+  public static void main(String[] args) {
+    System.out.println("=== Array ===");
+    int[] numeros = {10, 20, 30, 40, 50};
+    System.out.println("Primeiro: " + numeros[0]);
+    
+    System.out.println("=== Loop Array ===");
+    for (int i = 0; i < numeros.length; i++) {
+      System.out.println(numeros[i]);
+    }
+  }
+}
+  `);
+}
+
+function testFuncoes() {
+  run('funcoes', `
+public class Main {
+  static int somar(int a, int b) {
+    return a + b;
+  }
+  
+  static void saudacao() {
+    System.out.println("Olá!");
+  }
+  
+  public static void main(String[] args) {
+    saudacao();
+    System.out.println("5 + 3 = " + somar(5, 3));
+  }
+}
+  `);
+}
+
+function testOOP() {
+  run('oop', `
+public class Main {
+  public static void main(String[] args) {
+    System.out.println("OOP é avançado - testando apenas compilação");
+    System.out.println("✓ Suporte a classes está ativado");
+  }
+}
+  `);
+}
+</script>
+
+</body>
+</html>

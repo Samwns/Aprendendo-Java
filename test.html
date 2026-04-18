@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Teste Transpiler</title>
+  <style>
+    body { font-family: monospace; background: #0d1117; color: #e6edf3; padding: 20px; }
+    #output { background: #161b22; padding: 10px; margin: 10px 0; border-radius: 5px; }
+    button { padding: 10px; background: #f89820; color: #000; border: none; cursor: pointer; border-radius: 5px; }
+  </style>
+</head>
+<body>
+<h1>Teste do Transpiler Java</h1>
+<button onclick="testFor()">Teste: FOR Loop</button>
+<button onclick="testWhile()">Teste: WHILE Loop</button>
+<button onclick="testArrays()">Teste: Arrays</button>
+
+<div id="output">Saída aqui...</div>
+
+<script>
+// Simular ambiente Java
+window._javaEnv = {
+  System: {
+    out: {
+      println: function(...args) {
+        const line = args.map(a => {
+          if (a === null) return 'null';
+          if (typeof a === 'object') return JSON.stringify(a);
+          return String(a);
+        }).join(' ');
+        
+        const out = document.getElementById('output');
+        out.textContent += line + '\n';
+      }
+    }
+  },
+  _output: []
+};
+
+// Transpiler básico
+function transpile(javaCode) {
+  let code = javaCode
+    .replace(/import\s+[^;]+;/g, '')
+    .replace(/public\s+class\s+\w+\s*\{/, '')
+    .replace(/public\s+static\s+void\s+main\s*\([^)]*\)\s*\{/, '')
+    .replace(/\}\s*\}\s*$/, '');
+  
+  // Converter array literals de Java {1,2,3} para JS [1,2,3]
+  // Mas CUIDADO: não converter chaves de blocos if/for
+  code = code.replace(/=\s*\{([^{}]+)\}/g, '= [$1]');
+  
+  // FOR loop ANTES de tipos primitivos
+  code = code.replace(/for\s*\(\s*(int|double|float|long|short|byte|boolean)\s+(\w+)\s*=/g, 'for (let $2 =');
+  
+  // Arrays: int[] nums = ... → let nums = ...
+  code = code.replace(/\b(int|double|float|long|short|byte|boolean)\[\]\s+(\w+)\s*=/g, 'let $2 =');
+  code = code.replace(/\b(int|double|float|long|short|byte|boolean)\[\]\s+(\w+)\s*;/g, 'let $2;');
+  
+  // Tipos primitivos (sem arrays)
+  code = code.replace(/\b(int|double|float|long|short|byte|boolean)\s+(\w+)\s*;/g, 'let $2;');
+  code = code.replace(/\b(int|double|float|long|short|byte|boolean)\s+(\w+)\s*=/g, 'let $2 =');
+  
+  // System.out
+  code = code.replace(/System\.out\./g, 'window._javaEnv.System.out.');
+  
+  return code;
+}
+
+function testFor() {
+  document.getElementById('output').textContent = '';
+  const code = transpile(`
+public class Main {
+  public static void main(String[] args) {
+    for (int i = 1; i <= 5; i++) {
+      System.out.println(i);
+    }
+  }
+}
+  `);
+  
+  console.log('Executando:', code);
+  try {
+    eval(code);
+  } catch(e) {
+    document.getElementById('output').textContent = 'ERRO: ' + e.message;
+  }
+}
+
+function testWhile() {
+  document.getElementById('output').textContent = '';
+  const code = transpile(`
+public class Main {
+  public static void main(String[] args) {
+    int x = 1;
+    while (x <= 3) {
+      System.out.println(x);
+      x++;
+    }
+  }
+}
+  `);
+  
+  try {
+    eval(code);
+  } catch(e) {
+    document.getElementById('output').textContent = 'ERRO: ' + e.message;
+  }
+}
+
+function testArrays() {
+  document.getElementById('output').textContent = '';
+  const code = transpile(`
+public class Main {
+  public static void main(String[] args) {
+    int[] nums = {10, 20, 30};
+    for (int i = 0; i < nums.length; i++) {
+      System.out.println(nums[i]);
+    }
+  }
+}
+  `);
+  
+  try {
+    eval(code);
+  } catch(e) {
+    document.getElementById('output').textContent = 'ERRO: ' + e.message;
+  }
+}
+</script>
+</body>
+</html>

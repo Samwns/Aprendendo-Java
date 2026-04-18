@@ -200,11 +200,34 @@ async function executeJavaOffline(javaCode, stdin) {
       // Remover closing braces
       .replace(/\}\s*\}\s*$/, '');
 
+    // Converter array literals de Java {1,2,3} para JS [1,2,3]
+    code = code.replace(/=\s*\{([^{}]+)\}/g, '= [$1]');
+
     // Converter Scanner sc = new Scanner(System.in)
     code = code.replace(/Scanner\s+(\w+)\s*=\s*new\s+Scanner\s*\([^)]*\)/g, 'let $1 = new window._javaEnv.Scanner()');
     
-    // Converter tipos primitivos
-    code = code.replace(/\b(int|double|float|long|short|byte|boolean)\s+/g, 'let ');
+    // IMPORTANTE: Processar FOR loops ANTES de converter tipos primitivos
+    // Converter FOR loop: for (int i = ...) → for (let i = ...)
+    code = code.replace(/for\s*\(\s*(int|double|float|long|short|byte|boolean)\s+(\w+)\s*=/g, 'for (let $2 =');
+    
+    // Arrays: int[] nums = ... → let nums = ...
+    code = code.replace(/\b(int|double|float|long|short|byte|boolean)\[\]\s+(\w+)\s*=/g, 'let $2 =');
+    code = code.replace(/\b(int|double|float|long|short|byte|boolean)\[\]\s+(\w+)\s*;/g, 'let $2;');
+    
+    // Funções ANTES de tipos primitivos
+    code = code.replace(/\bstatic\s+(int|double|float|long|short|byte|boolean|void)\s+(\w+)\s*\(/g, 'function $2(');
+    code = code.replace(/\b(int|double|float|long|short|byte|boolean|void)\s+(\w+)\s*\(/g, 'function $2(');
+    
+    // Remover tipos em parâmetros: (int a, int b) → (a, b)
+    code = code.replace(/\(\s*(int|double|float|long|short|byte|boolean|String)\s+(\w+)/g, '($2');
+    code = code.replace(/,\s*(int|double|float|long|short|byte|boolean|String)\s+(\w+)/g, ', $2');
+    
+    // Declarações de variáveis simples: int x; → let x;
+    code = code.replace(/\b(int|double|float|long|short|byte|boolean)\s+(\w+)\s*;/g, 'let $2;');
+    
+    // Declarações com inicialização: int x = 5; → let x = 5;
+    code = code.replace(/\b(int|double|float|long|short|byte|boolean)\s+(\w+)\s*=/g, 'let $2 =');
+    
     code = code.replace(/\bString\s+/g, 'let ');
     code = code.replace(/\bfinal\s+/g, 'const ');
 
@@ -216,12 +239,6 @@ async function executeJavaOffline(javaCode, stdin) {
 
     // Substituir Math
     code = code.replace(/Math\./g, 'window._javaEnv.Math.');
-
-    // Converter static public void método() → function método()
-    code = code.replace(/public\s+static\s+void\s+(\w+)\s*\(/g, 'function $1(');
-
-    // Converter public static tipo método() → function método()
-    code = code.replace(/public\s+static\s+(int|double|String|boolean)\s+(\w+)\s*\(/g, 'function $2(');
 
     // Converter private/public → nada
     code = code.replace(/\b(private|protected|public)\s+/g, '');
