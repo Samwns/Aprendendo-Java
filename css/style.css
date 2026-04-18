@@ -364,3 +364,69 @@ html, body {
 /* ─── THEME OVERRIDE FOR MONACO ─────────────────────────────────────── */
 .monaco-editor .margin { background: var(--bg) !important; }
 .monaco-editor-background { background: var(--bg) !important; }
+
+/* ─── RESPONSIVE DESIGN ─────────────────────────────────────────────── */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .workspace {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+  .ed-pane {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .topbar {
+    padding: 0 10px;
+    gap: 8px;
+  }
+  .logo { font-size: 1rem; }
+  .filetab { display: none; }
+  .runtime-wrap { margin-left: 0; }
+  #runtimeSelect { max-width: 150px; font-size: 0.68rem; }
+  .topbar-right { gap: 6px; }
+  .btn { font-size: 0.68rem; padding: 4px 10px; }
+  .sbar-r { gap: 8px; }
+  .sbar-r span { display: none; }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .app {
+    grid-template-rows: 56px 1fr 32px;
+  }
+  .topbar {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 8px 10px;
+    gap: 6px;
+  }
+  .logo { font-size: 0.9rem; }
+  .ver-badge { display: none; }
+  .runtime-wrap { order: 1; width: 100%; justify-content: center; }
+  #runtimeSelect { max-width: none; flex: 1; }
+  .topbar-right { order: 2; width: 100%; justify-content: center; margin-left: 0; }
+  .workspace {
+    grid-template-rows: 2fr 1fr;
+  }
+  .pane-hdr { font-size: 0.6rem; padding: 4px 8px; }
+  .term-bar { font-size: 0.6rem; padding: 4px 8px; }
+  .stdin-row { font-size: 0.7rem; }
+  .meta { font-size: 0.7rem; }
+  .sbar { padding: 0 8px; font-size: 0.65rem; }
+  .sbar-r { display: none; }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .topbar { padding: 6px 8px; }
+  .logo { font-size: 0.8rem; }
+  .btn { font-size: 0.65rem; padding: 3px 8px; }
+  .pill { font-size: 0.6rem; padding: 2px 6px; }
+  .workspace {
+    grid-template-rows: 3fr 1fr;
+  }
+  #monacoContainer { font-size: 12px; }
+  .term-pane { font-size: 12px; }
+}
