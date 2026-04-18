@@ -10,9 +10,77 @@
 
 ---
 
-## 1️⃣ - 🛠️ Instalando e Configurando o Ambiente
+## 🌐 WebJDK — Java no Navegador
 
-### 📦 Via SDKMAN (Recomendado — funciona no Linux e macOS)
+Este repositório inclui um **WebJDK** que permite executar código Java diretamente no navegador usando **CheerpJ** (JVM WebAssembly).
+
+### 🚀 Como Usar
+
+1. **Acesse o WebJDK**: [https://samwns.github.io/Aprendendo-Java/](https://samwns.github.io/Aprendendo-Java/)
+2. **Escreva seu código** no editor Monaco
+3. **Clique em "▶ Executar"** ou pressione `Ctrl+Enter`
+4. **Veja a saída** no terminal integrado
+
+### ⚠️ Problema Atual
+
+Atualmente, o Git Pages do GitHub não suporta arquivos JAR necessários para o CheerpJ. Para fazer funcionar completamente:
+
+#### 🔧 Solução: Deploy no Netlify
+
+1. **Crie uma conta** no [Netlify](https://netlify.com)
+2. **Conecte seu repositório** GitHub
+3. **Deploy automático** será feito
+4. **Acesse sua URL** personalizada
+
+O Netlify suporta arquivos binários e CORS necessários para o WebJDK funcionar.
+
+#### 🛠️ Deploy Manual
+
+Se preferir testar localmente:
+
+```bash
+# Instalar http-server
+npm install -g http-server
+
+# Servir o projeto
+http-server --port 8000 --cors
+```
+
+Acesse: `http://localhost:8000`
+
+---
+
+## 📁 Estrutura do Projeto
+
+```
+Aprendendo-Java/
+├── index.html          # Página principal do WebJDK
+├── css/
+│   └── style.css       # Estilos da interface
+├── js/
+│   ├── main.js         # Ponto de entrada da aplicação
+│   ├── editor.js       # Configuração do Monaco Editor
+│   ├── runtime.js      # Motor de execução CheerpJ
+│   └── terminal.js     # Interface do terminal
+├── jars/
+│   ├── ecj.jar         # Eclipse Compiler for Java
+│   └── runner.jar      # Utilitário de execução
+└── README.md           # Este arquivo
+```
+
+### 🎯 Funcionalidades do WebJDK
+
+- ✅ **Editor Monaco** com syntax highlighting Java
+- ✅ **Execução em tempo real** via CheerpJ WebAssembly
+- ✅ **Múltiplas versões Java** (8, 11, 17)
+- ✅ **Terminal integrado** com saída colorida
+- ✅ **Snippets inteligentes** (sout, fori, etc.)
+- ✅ **Responsivo** para mobile
+- ✅ **Entrada stdin** para programas interativos
+
+---
+
+## 1️⃣ - 🛠️ Instalando e Configurando o Ambiente
 
 O **SDKMAN** é um gerenciador de SDKs que permite instalar e trocar versões do JDK com facilidade:
 
