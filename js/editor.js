@@ -211,6 +211,39 @@ function registerJavaCompletions(monaco) {
         });
       });
 
+      // Variáveis e métodos comuns
+      const commonVars = [
+        { label: 'args', kind: monaco.languages.CompletionItemKind.Variable, detail: 'String[]' },
+        { label: 'i', kind: monaco.languages.CompletionItemKind.Variable, detail: 'int' },
+        { label: 'j', kind: monaco.languages.CompletionItemKind.Variable, detail: 'int' },
+        { label: 'x', kind: monaco.languages.CompletionItemKind.Variable, detail: 'int' },
+        { label: 'y', kind: monaco.languages.CompletionItemKind.Variable, detail: 'int' },
+        { label: 'name', kind: monaco.languages.CompletionItemKind.Variable, detail: 'String' },
+        { label: 'age', kind: monaco.languages.CompletionItemKind.Variable, detail: 'int' },
+        { label: 'idade', kind: monaco.languages.CompletionItemKind.Variable, detail: 'int' },
+        { label: 'nome', kind: monaco.languages.CompletionItemKind.Variable, detail: 'String' },
+        { label: 'result', kind: monaco.languages.CompletionItemKind.Variable, detail: 'any' },
+        { label: 'count', kind: monaco.languages.CompletionItemKind.Variable, detail: 'int' },
+        { label: 'total', kind: monaco.languages.CompletionItemKind.Variable, detail: 'int' },
+        { label: 'sum', kind: monaco.languages.CompletionItemKind.Variable, detail: 'int' },
+        { label: 'media', kind: monaco.languages.CompletionItemKind.Variable, detail: 'double' },
+        { label: 'valor', kind: monaco.languages.CompletionItemKind.Variable, detail: 'any' },
+        { label: 'dados', kind: monaco.languages.CompletionItemKind.Variable, detail: 'String[]' },
+        { label: 'lista', kind: monaco.languages.CompletionItemKind.Variable, detail: 'List' },
+        { label: 'mapa', kind: monaco.languages.CompletionItemKind.Variable, detail: 'Map' },
+      ];
+
+      commonVars.forEach(v => {
+        suggestions.push({
+          label: v.label,
+          kind: v.kind,
+          insertText: v.label,
+          detail: v.detail,
+          range,
+          sortText: '3' + v.label,
+        });
+      });
+
       return { suggestions };
     },
   });
@@ -230,6 +263,28 @@ function registerJavaCompletions(monaco) {
         { label: 'println', detail: 'System.out.println()', insert: 'println($0);' },
         { label: 'print',   detail: 'System.out.print()',   insert: 'print($0);' },
         { label: 'printf',  detail: 'System.out.printf()',  insert: 'printf("$1%n", $0);' },
+        { label: 'flush',   detail: 'System.out.flush()',   insert: 'flush()' },
+        { label: 'close',   detail: 'System.out.close()',   insert: 'close()' },
+      ];
+
+      // Métodos Math comuns
+      const mathMethods = [
+        { label: 'abs', detail: 'Math.abs()', insert: 'abs($0)' },
+        { label: 'sqrt', detail: 'Math.sqrt()', insert: 'sqrt($0)' },
+        { label: 'pow', detail: 'Math.pow()', insert: 'pow($1, $0)' },
+        { label: 'floor', detail: 'Math.floor()', insert: 'floor($0)' },
+        { label: 'ceil', detail: 'Math.ceil()', insert: 'ceil($0)' },
+        { label: 'round', detail: 'Math.round()', insert: 'round($0)' },
+        { label: 'min', detail: 'Math.min()', insert: 'min($1, $0)' },
+        { label: 'max', detail: 'Math.max()', insert: 'max($1, $0)' },
+        { label: 'random', detail: 'Math.random()', insert: 'random()' },
+        { label: 'sin', detail: 'Math.sin()', insert: 'sin($0)' },
+        { label: 'cos', detail: 'Math.cos()', insert: 'cos($0)' },
+        { label: 'tan', detail: 'Math.tan()', insert: 'tan($0)' },
+        { label: 'log', detail: 'Math.log()', insert: 'log($0)' },
+        { label: 'exp', detail: 'Math.exp()', insert: 'exp($0)' },
+        { label: 'PI', detail: 'Math.PI', insert: 'PI' },
+        { label: 'E', detail: 'Math.E', insert: 'E' },
       ];
 
       // Métodos String comuns
@@ -255,7 +310,7 @@ function registerJavaCompletions(monaco) {
         { label: 'valueOf()',      insert: 'valueOf($0)' },
       ];
 
-      const all = [...systemOut, ...strMethods];
+      const all = [...systemOut, ...mathMethods, ...strMethods];
       return {
         suggestions: all.map(m => ({
           label: m.label,
@@ -357,7 +412,7 @@ function getDefaultCode() {
   return `public class Main {
     public static void main(String[] args) {
         System.out.println("Hello, World! ☕");
-        System.out.println("WebJDK — Java real!");
+        System.out.println("WebJDK — Java");
         
         // Tente os snippets: sout, psvm, fori, foreach...
         // Ctrl+Space para sugestões, Ctrl+Enter para executar

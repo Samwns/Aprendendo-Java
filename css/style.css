@@ -429,4 +429,61 @@ html, body {
   }
   #monacoContainer { font-size: 12px; }
   .term-pane { font-size: 12px; }
+  
+  /* Botões flutuantes para mobile */
+  .topbar-right {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    flex-direction: column;
+    gap: 10px;
+    padding: 8px;
+    background: linear-gradient(to top, var(--surface), var(--surface) 80%, transparent);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+    width: 100%;
+    margin: 0;
+    border-top: 1px solid var(--border2);
+  }
+  
+  .topbar-right .btn {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 0.72rem;
+    justify-content: center;
+  }
+  
+  .topbar-right .btn-run {
+    padding: 10px 16px;
+    font-weight: 700;
+    background: var(--java);
+  }
+  
+  .pill {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    margin: 0;
+  }
+}
+
+/* Extra small */
+@media (max-height: 600px) {
+  .topbar-right {
+    flex-direction: row !important;
+    position: static !important;
+    border-top: 1px solid var(--border2) !important;
+    padding: 6px !important;
+    gap: 6px !important;
+    background: var(--surface) !important;
+    backdrop-filter: none !important;
+  }
+  
+  .topbar-right .btn {
+    flex: 1;
+    width: auto;
+    padding: 4px 8px !important;
+    font-size: 0.65rem !important;
+  }
 }

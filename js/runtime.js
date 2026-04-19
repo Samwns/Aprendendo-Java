@@ -7,7 +7,7 @@ import { o, setPill, setMeta, addCursor, clearOut, setSbRuntime } from './termin
 
 // ── CONFIGURAÇÃO ───────────────────────────────────────────────────────────────
 export const RUNTIMES = [
-  { id: 'java', label: '☕ Java Online (Navegador · Real)', version: '11', offline: true },
+  { id: 'java', label: '☕ Java Online', version: '11', offline: true },
 ];
 
 let busy = false;
@@ -61,6 +61,9 @@ export async function execute(src, stdin) {
   o('ln-dim', `$ javac Main.java  [Java 11 · Online]`);
   t0 = Date.now();
   const cur = addCursor();
+  
+  // Simular delay de compilação real (300-600ms)
+  await new Promise(resolve => setTimeout(resolve, Math.random() * 300 + 300));
 
   try {
     const result = await executeJavaOffline(src, stdin);
@@ -318,6 +321,9 @@ async function executeJavaOffline(javaCode, stdin) {
     code = code.replace(/\bstatic\s+/g, '');
 
     console.log('Código preparado:', code.substring(0, 400));
+
+    // Simular delay de execução real (200-400ms)
+    await new Promise(resolve => setTimeout(resolve, Math.random() * 200 + 200));
 
     // Executar
     eval(code);
