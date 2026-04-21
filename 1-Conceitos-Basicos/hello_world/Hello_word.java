@@ -1,7 +1,7 @@
 // Passo 1: Hello World - Seu primeiro programa Java!
 // Este é o programa mais simples em Java
 
-public class Main {
+public class Hello_word {
   public static void main(String[] args) {
     System.out.println("Hello, World! ☕");
   }

@@ -1,7 +1,7 @@
 // Passo 2: Tipos de Dados
 // Java tem diferentes tipos para armazenar informações
 
-public class Main {
+public class dados {
   public static void main(String[] args) {
     // Tipos INTEIROS (números sem decimal)
     int idade = 25;

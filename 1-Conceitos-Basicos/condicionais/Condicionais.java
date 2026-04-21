@@ -1,7 +1,7 @@
 // Passo 4: Condicionais (IF / ELSE / SWITCH)
 // Como fazer o programa tomar DECISÕES
 
-public class Main {
+public class Condicionais {
   public static void main(String[] args) {
     // EXEMPLO 1: IF SIMPLES
     int idade = 20;

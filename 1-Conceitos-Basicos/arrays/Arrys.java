@@ -1,7 +1,7 @@
 // Passo 6: Arrays (Vetores)
 // Como guardar VÁRIOS valores do mesmo tipo
 
-public class Main {
+public class Arrys {
   public static void main(String[] args) {
     // EXEMPLO 1: Criar um array de inteiros
     System.out.println("=== Array de Inteiros ===");

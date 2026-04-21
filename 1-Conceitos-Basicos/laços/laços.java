@@ -1,7 +1,7 @@
 // Passo 5: Loops (FOR, WHILE, DO-WHILE)
 // Como REPETIR instruções várias vezes
 
-public class Main {
+public class laços {
   public static void main(String[] args) {
     // EXEMPLO 1: FOR - quando sabe QUANTAS vezes
     System.out.println("=== FOR (1 a 5) ===");

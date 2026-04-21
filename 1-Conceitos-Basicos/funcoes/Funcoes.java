@@ -1,7 +1,7 @@
 // Passo 7: Funções/Métodos
 // Como REUTILIZAR código criando seus próprios comandos
 
-public class Main {
+public class Funcoes {
   // Função 1: Sem parâmetros, sem retorno
   static void saudacao() {
     System.out.println("Olá, bem-vindo!");
